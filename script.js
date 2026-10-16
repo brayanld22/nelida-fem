@@ -1,12 +1,13 @@
 
-/* ==========================================================
-   NELIDA FEM - TIENDA PUBLICA
-   Supabase + Catalogo + Carrito + WhatsApp Web
-   ========================================================== */
+/* ==========================================
+   NELIDA FEM - TIENDA ONLINE
+   SUPABASE + CARRITO + WHATSAPP
+   PARA CELULARES Y COMPUTADORAS
+========================================== */
 
 "use strict";
 
-// 1. CONFIGURACION
+/* 1. CONFIGURACION GENERAL */
 
 const WHATSAPP_POR_DEFECTO = "51972491860";
 
@@ -19,7 +20,7 @@ let numeroWhatsApp = WHATSAPP_POR_DEFECTO;
 
 const $ = (id) => document.getElementById(id);
 
-// EMOJIS UNICODE PARA WHATSAPP
+/* 2. EMOJIS PARA WHATSAPP */
 
 const EMOJI = {
   bolsa: "\u{1F6CD}\uFE0F",
@@ -33,7 +34,7 @@ const EMOJI = {
   brillo: "\u2728"
 };
 
-// FORMATO DE PRECIOS EN SOLES
+/* 3. FORMATO DE PRECIOS */
 
 function soles(valor) {
 
@@ -45,7 +46,7 @@ function soles(valor) {
 }
 
 /* ==========================================
-   2. CARRITO LOCAL
+   4. GUARDAR Y RECUPERAR CARRITO
 ========================================== */
 
 function leerCarrito() {
@@ -76,8 +77,6 @@ function leerCarrito() {
   }
 }
 
-// GUARDAR EL CARRITO
-
 function guardarCarrito() {
 
   try {
@@ -95,11 +94,10 @@ function guardarCarrito() {
     );
 
   }
-
 }
 
 /* ==========================================
-   3. FUNCIONES AUXILIARES
+   5. FUNCIONES AUXILIARES
 ========================================== */
 
 function categoriaNormalizada(texto) {
@@ -112,8 +110,6 @@ function categoriaNormalizada(texto) {
 
 }
 
-// VALIDAR RUTAS DE IMAGEN
-
 function imagenValida(ruta) {
 
   return typeof ruta === "string" && (
@@ -122,8 +118,6 @@ function imagenValida(ruta) {
   );
 
 }
-
-// CREAR ELEMENTOS HTML
 
 function elemento(etiqueta, clase = "", texto) {
 
@@ -141,8 +135,6 @@ function elemento(etiqueta, clase = "", texto) {
 
 }
 
-// BUSCAR PRODUCTOS
-
 function productoPorId(id) {
 
   return productos.find(
@@ -150,8 +142,6 @@ function productoPorId(id) {
   );
 
 }
-
-// CANTIDADES DE UN PRODUCTO
 
 function cantidadProducto(id) {
 
@@ -166,7 +156,7 @@ function cantidadProducto(id) {
 }
 
 /* ==========================================
-   4. FOTOGRAFIAS DE PRODUCTOS
+   6. MOSTRAR FOTOGRAFIAS
 ========================================== */
 
 function crearFoto(ruta, clase, nombre = "Prenda") {
@@ -200,15 +190,13 @@ function crearFoto(ruta, clase, nombre = "Prenda") {
     };
 
     caja.append(imagen);
-
   }
 
   return caja;
-
 }
 
 /* ==========================================
-   5. ACTUALIZAR STOCK DEL CARRITO
+   7. COMPROBAR STOCK DEL CARRITO
 ========================================== */
 
 function limpiarCarritoDesactualizado() {
@@ -280,11 +268,10 @@ function limpiarCarritoDesactualizado() {
   carrito = nuevo;
 
   guardarCarrito();
-
 }
 
 /* ==========================================
-   6. CALCULAR TOTAL
+   8. CALCULAR TOTAL DEL PEDIDO
 ========================================== */
 
 function totalPedido() {
@@ -298,11 +285,10 @@ function totalPedido() {
     );
 
   }, 0);
-
 }
 
 /* ==========================================
-   7. MENSAJE DE WHATSAPP
+   9. MENSAJE BONITO PARA WHATSAPP
 ========================================== */
 
 function textoPedido() {
@@ -347,7 +333,22 @@ function textoPedido() {
 }
 
 /* ==========================================
-   8. ENLACE DIRECTO DE WHATSAPP WEB
+   10. DETECTAR CELULAR O COMPUTADORA
+========================================== */
+
+function esDispositivoMovil() {
+
+  return /Android|iPhone|iPad|iPod|Windows Phone|IEMobile|Mobile/i
+    .test(navigator.userAgent) ||
+    (
+      navigator.platform === "MacIntel" &&
+      navigator.maxTouchPoints > 1
+    );
+
+}
+
+/* ==========================================
+   11. WHATSAPP SEGUN DISPOSITIVO
 ========================================== */
 
 function enlaceWhatsApp(mensaje) {
@@ -356,15 +357,53 @@ function enlaceWhatsApp(mensaje) {
     numeroWhatsApp
   ).replace(/\D/g, "");
 
+  const texto = encodeURIComponent(mensaje);
+
+  // CELULARES:
+  // Utiliza el enlace universal de WhatsApp.
+
+  if (esDispositivoMovil()) {
+
+    return (
+      `https://wa.me/${numero}?text=${texto}`
+    );
+
+  }
+
+  // COMPUTADORAS:
+  // Abre directamente WhatsApp Web.
+
   return (
-    `https://web.whatsapp.com/send?phone=${numero}&text=` +
-    encodeURIComponent(mensaje)
+    `https://web.whatsapp.com/send?phone=${numero}&text=${texto}`
   );
 
 }
 
+/* CONFIGURAR EL ENLACE */
+
+function configurarEnlaceWhatsApp(
+  enlace,
+  mensaje,
+  habilitado = true
+) {
+
+  enlace.href = habilitado
+    ? enlaceWhatsApp(mensaje)
+    : "#";
+
+  // En celulares se utiliza la misma pestana
+  // para facilitar la apertura de la aplicacion.
+
+  enlace.target = esDispositivoMovil()
+    ? "_self"
+    : "_blank";
+
+  enlace.rel = "noopener noreferrer";
+
+}
+
 /* ==========================================
-   9. MOSTRAR PRODUCTOS DE SUPABASE
+   12. MOSTRAR PRODUCTOS DE SUPABASE
 ========================================== */
 
 function renderizarProductos() {
@@ -403,7 +442,7 @@ function renderizarProductos() {
       "producto"
     );
 
-    // FOTO
+    /* FOTO */
 
     const foto = crearFoto(
       p.imagen,
@@ -425,7 +464,7 @@ function renderizarProductos() {
       )
     );
 
-    // INFORMACION
+    /* INFORMACION */
 
     const detalles = elemento(
       "div",
@@ -458,7 +497,7 @@ function renderizarProductos() {
       )
     );
 
-    // TALLAS
+    /* TALLAS */
 
     const label = elemento(
       "label",
@@ -488,7 +527,7 @@ function renderizarProductos() {
 
     select.disabled = !disponible;
 
-    // BOTON AGREGAR
+    /* BOTON AGREGAR AL CARRITO */
 
     const boton = elemento(
       "button",
@@ -511,7 +550,7 @@ function renderizarProductos() {
 
     });
 
-    // STOCK
+    /* STOCK */
 
     detalles.append(
       label,
@@ -535,11 +574,10 @@ function renderizarProductos() {
     catalogo.append(tarjeta);
 
   }
-
 }
 
 /* ==========================================
-   10. AGREGAR AL CARRITO
+   13. AGREGAR PRODUCTOS AL CARRITO
 ========================================== */
 
 function agregarAlCarrito(id, talla) {
@@ -595,7 +633,7 @@ function agregarAlCarrito(id, talla) {
 }
 
 /* ==========================================
-   11. MODIFICAR CANTIDADES
+   14. MODIFICAR CANTIDADES
 ========================================== */
 
 function cambiarCantidad(id, talla, accion) {
@@ -648,7 +686,7 @@ function cambiarCantidad(id, talla, accion) {
 }
 
 /* ==========================================
-   12. CARRITO DETALLADO
+   15. CARRITO DETALLADO
 ========================================== */
 
 function renderizarCarrito() {
@@ -660,7 +698,7 @@ function renderizarCarrito() {
   $("carrito-vacio").hidden =
     carrito.length > 0;
 
-  // CONTADOR
+  /* CONTADOR */
 
   const cantidadTotal = carrito.reduce(
     (suma, item) =>
@@ -671,12 +709,12 @@ function renderizarCarrito() {
   $("contador-carrito").textContent =
     String(cantidadTotal);
 
-  // TOTAL
+  /* TOTAL */
 
   $("total-carrito").textContent =
     soles(totalPedido());
 
-  // MOSTRAR CADA PRODUCTO
+  /* MOSTRAR PRODUCTOS DEL CARRITO */
 
   for (const item of carrito) {
 
@@ -691,7 +729,7 @@ function renderizarCarrito() {
       "item-carrito"
     );
 
-    // FOTO DEL PRODUCTO
+    /* FOTOGRAFIA */
 
     const foto = crearFoto(
       p.imagen,
@@ -699,14 +737,12 @@ function renderizarCarrito() {
       p.nombre
     );
 
-    // INFORMACION
+    /* INFORMACION */
 
     const datos = elemento(
       "div",
       "detalles-carrito"
     );
-
-    // NOMBRE Y TALLA
 
     datos.append(
       elemento(
@@ -722,7 +758,7 @@ function renderizarCarrito() {
       )
     );
 
-    // PRECIO UNITARIO
+    /* PRECIO UNITARIO */
 
     const unitario = elemento(
       "div",
@@ -745,7 +781,7 @@ function renderizarCarrito() {
 
     datos.append(unitario);
 
-    // CONTROLES DE CANTIDAD
+    /* CONTROLES DE CANTIDAD */
 
     const controles = elemento(
       "div",
@@ -810,7 +846,7 @@ function renderizarCarrito() {
 
     datos.append(controles);
 
-    // SUBTOTAL POR PRODUCTO
+    /* SUBTOTAL */
 
     const subtotal = elemento(
       "div",
@@ -842,7 +878,7 @@ function renderizarCarrito() {
 
   }
 
-  // PREPARAR EL PEDIDO DE WHATSAPP
+  /* ENLACE DEL PEDIDO */
 
   const finalizar = $("finalizar-pedido");
 
@@ -858,14 +894,16 @@ function renderizarCarrito() {
     String(!hayProductos)
   );
 
-  finalizar.href = hayProductos
-    ? enlaceWhatsApp(textoPedido())
-    : "#";
+  configurarEnlaceWhatsApp(
+    finalizar,
+    hayProductos ? textoPedido() : "",
+    hayProductos
+  );
 
 }
 
 /* ==========================================
-   13. ABRIR CARRITO
+   16. ABRIR CARRITO
 ========================================== */
 
 function abrirCarrito() {
@@ -881,7 +919,7 @@ function abrirCarrito() {
 }
 
 /* ==========================================
-   14. CONECTAR CON SUPABASE
+   17. CONECTAR CON SUPABASE
 ========================================== */
 
 async function cargarTienda() {
@@ -906,7 +944,7 @@ async function cargarTienda() {
   ) {
 
     throw new Error(
-      "Revisa supabase-config.js: faltan la URL o la clave publica."
+      "Revisa supabase-config.js."
     );
 
   }
@@ -916,7 +954,7 @@ async function cargarTienda() {
     publishableKey
   );
 
-  // CARGAR PRODUCTOS
+  /* CARGAR PRODUCTOS */
 
   const respuesta = await cliente
     .from("productos")
@@ -963,7 +1001,7 @@ async function cargarTienda() {
 
   }));
 
-  // CONFIGURACION DE LA TIENDA
+  /* CONFIGURACION GENERAL */
 
   const config = await cliente
     .from("configuracion")
@@ -980,7 +1018,7 @@ async function cargarTienda() {
 
     const c = config.data;
 
-    // ANUNCIO
+    /* ANUNCIO */
 
     if (c.anuncio) {
 
@@ -989,7 +1027,7 @@ async function cargarTienda() {
 
     }
 
-    // PORTADA
+    /* TEXTO DE PORTADA */
 
     if (
       c.lema &&
@@ -1001,7 +1039,7 @@ async function cargarTienda() {
 
     }
 
-    // IMAGEN DE PORTADA
+    /* FOTOGRAFIA DE PORTADA */
 
     if (imagenValida(c.portada_url)) {
 
@@ -1010,7 +1048,7 @@ async function cargarTienda() {
 
     }
 
-    // WHATSAPP
+    /* NUMERO DE WHATSAPP */
 
     const numero = String(
       c.whatsapp || ""
@@ -1024,14 +1062,14 @@ async function cargarTienda() {
 
   }
 
-  // ENLACE PARA CONSULTAS GENERALES
+  /* WHATSAPP DE CONSULTAS GENERALES */
 
-  $("contacto-whatsapp").href =
-    enlaceWhatsApp(
-      `\u00A1Hola! ${EMOJI.corazon} Vi Nelida FEM y quisiera informacion sobre sus prendas.`
-    );
+  configurarEnlaceWhatsApp(
+    $("contacto-whatsapp"),
+    `\u00A1Hola! ${EMOJI.corazon} Vi Nelida FEM y quisiera informacion sobre sus prendas.`
+  );
 
-  // MOSTRAR PRODUCTOS Y CARRITO
+  /* MOSTRAR PRODUCTOS */
 
   limpiarCarritoDesactualizado();
 
@@ -1042,12 +1080,12 @@ async function cargarTienda() {
 }
 
 /* ==========================================
-   15. FUNCIONES AL INICIAR LA PAGINA
+   18. INICIAR LA TIENDA
 ========================================== */
 
 window.addEventListener("DOMContentLoaded", () => {
 
-  // ABRIR CARRITO
+  /* ABRIR CARRITO */
 
   $("abrir-carrito").addEventListener(
     "click",
@@ -1059,14 +1097,14 @@ window.addEventListener("DOMContentLoaded", () => {
     abrirCarrito
   );
 
-  // CERRAR CARRITO
+  /* CERRAR CARRITO */
 
   $("cerrar-carrito").addEventListener(
     "click",
     () => $("ventana-carrito").close()
   );
 
-  // CERRAR AL HACER CLIC FUERA
+  /* CERRAR SI SE PRESIONA FUERA */
 
   $("ventana-carrito").addEventListener(
     "click",
@@ -1083,7 +1121,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   );
 
-  // EVITAR FINALIZAR CARRITO VACIO
+  /* EVITAR PEDIDOS VACIOS */
 
   $("finalizar-pedido").addEventListener(
     "click",
@@ -1098,7 +1136,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   );
 
-  // MENU PARA CELULARES
+  /* MENU PARA CELULARES */
 
   const menu = $("menu");
 
@@ -1139,7 +1177,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   });
 
-  // FILTROS DE CATEGORIAS
+  /* FILTROS DEL CATALOGO */
 
   function cambiarFiltro(filtro) {
 
@@ -1193,7 +1231,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     });
 
-  // CARGAR SUPABASE
+  /* CARGAR DATOS DE SUPABASE */
 
   cargarTienda().catch((error) => {
 
