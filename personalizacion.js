@@ -18,16 +18,6 @@ function aplicarTemaNelida(nombre) {
   raiz.setProperty("--borde", tema.borde);
 }
 
-function enlaceRedValido(valor) {
-  if (!valor) return null;
-  try {
-    const url = new URL(valor);
-    return url.protocol === "https:" ? url.href : null;
-  } catch {
-    return null;
-  }
-}
-
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const ajustes = window.NELIDA_SUPABASE;
@@ -37,7 +27,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
     });
     const { data, error } = await db.from("configuracion")
-      .select("descripcion_portada,titulo_catalogo,subtitulo_catalogo,promocion_activa,promocion_texto,instagram_url,tiktok_url,facebook_url,tema")
+      .select("descripcion_portada,titulo_catalogo,subtitulo_catalogo,promocion_activa,promocion_texto,tema")
       .eq("id", 1).maybeSingle();
     if (error) {
       console.warn("Configuración adicional aún no disponible:", error.message);
@@ -64,23 +54,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       promo.hidden = true;
     }
 
-    const redes = document.getElementById("redes-sociales");
-    redes.replaceChildren();
-    for (const [etiqueta, valor] of [
-      ["Instagram", data.instagram_url],
-      ["TikTok", data.tiktok_url],
-      ["Facebook", data.facebook_url]
-    ]) {
-      const href = enlaceRedValido(valor);
-      if (!href) continue;
-      const a = document.createElement("a");
-      a.textContent = etiqueta + " ↗";
-      a.href = href;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      redes.append(a);
-    }
-    redes.hidden = redes.children.length === 0;
   } catch (error) {
     console.warn("No se pudo cargar la personalización:", error.message);
   }

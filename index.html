@@ -31,13 +31,22 @@
         <a href="#productos" data-filtro="tops">Tops</a>
         <a href="#productos" data-filtro="pantalones">Pantalones</a>
         <a href="#productos" data-filtro="vestidos">Vestidos</a>
+        <a href="#productos" data-filtro="favoritos">Mis favoritos ♡</a>
         <a href="#como-comprar">Cómo comprar</a>
       </nav>
-      <button id="abrir-carrito" class="boton-carrito" type="button"
-              aria-haspopup="dialog" aria-controls="ventana-carrito">
-        🛍️ <span class="texto-carrito">Carrito</span>
-        <span id="contador-carrito" class="contador">0</span>
-      </button>
+      <div class="acciones-navegacion">
+        <button id="abrir-favoritos" class="boton-favoritos" type="button"
+                aria-label="Ver mis prendas favoritas">
+          <span aria-hidden="true" class="simbolo-favoritos">♡</span>
+          <span class="texto-favoritos">Favoritos</span>
+          <span id="contador-favoritos" class="contador-favoritos">0</span>
+        </button>
+        <button id="abrir-carrito" class="boton-carrito" type="button"
+                aria-haspopup="dialog" aria-controls="ventana-carrito">
+          🛍️ <span class="texto-carrito">Carrito</span>
+          <span id="contador-carrito" class="contador">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -75,9 +84,11 @@
         <button type="button" class="filtro" data-filtro="tops" aria-pressed="false">Tops</button>
         <button type="button" class="filtro" data-filtro="pantalones" aria-pressed="false">Pantalones</button>
         <button type="button" class="filtro" data-filtro="vestidos" aria-pressed="false">Vestidos</button>
+        <button type="button" class="filtro filtro-favoritos" data-filtro="favoritos" aria-pressed="false">♡ Mis favoritos</button>
       </div>
 
       <p id="estado-productos" class="estado-productos" role="status" aria-live="polite">Cargando prendas desde Supabase...</p>
+      <button id="volver-catalogo" type="button" class="volver-catalogo" hidden>Ver todas las prendas ↗</button>
       <!-- Las publicaciones se crean automáticamente desde la tabla productos -->
       <div id="catalogo" class="catalogo"></div>
     </section>
@@ -92,7 +103,6 @@
           <div class="paso"><span>03</span><h3>Finaliza por WhatsApp</h3><p>Envía el pedido y coordina el pago con la encargada.</p></div>
         </div>
         <button id="carrito-inferior" type="button" class="boton-principal">Ver mi carrito 🛍️</button>
-        <div id="redes-sociales" class="redes-sociales" hidden></div>
         <a id="contacto-whatsapp" class="enlace-consulta"
            href="https://wa.me/51972491860" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp ↗</a>
       </div>

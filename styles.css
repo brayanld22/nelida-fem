@@ -624,10 +624,88 @@ h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
   background: var(--rosa-claro); border: 1px solid var(--borde);
   color: var(--oscuro); font-weight: 700; text-align: center; line-height: 1.6;
 }
-.redes-sociales { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 25px 0 7px; }
-.redes-sociales a {
-  display: inline-flex; padding: 11px 18px; border-radius: 22px;
-  border: 1px solid var(--borde); background: white;
-  color: var(--oscuro); font-size: 13px; font-weight: 700;
+/* ====================================================
+   PASO 2: FAVORITOS (MÓVIL Y ESCRITORIO)
+   ==================================================== */
+.acciones-navegacion {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
 }
-.redes-sociales a:hover { border-color: var(--acento); color: var(--acento); }
+.boton-favoritos {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: var(--rosa-claro);
+  color: var(--oscuro);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: border-color .2s ease, background .2s ease;
+}
+.boton-favoritos:hover { border-color: var(--acento); background: var(--rosa); }
+.simbolo-favoritos { color: var(--acento); font-size: 22px; line-height: 1; }
+.contador-favoritos {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 999px;
+  color: var(--blanco);
+  background: var(--acento);
+  font-size: 11px;
+  line-height: 1;
+}
+.boton-corazon {
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #e9d3de;
+  border-radius: 50%;
+  background: #fffdfef0;
+  color: var(--acento);
+  box-shadow: 0 3px 14px #36273120;
+  font-size: 29px;
+  line-height: 1;
+  transition: transform .2s ease, background .2s ease;
+}
+.boton-corazon:hover { transform: scale(1.08); background: var(--rosa-claro); }
+.boton-corazon.seleccionado { background: var(--acento); color: white; border-color: var(--acento); }
+.boton-corazon.seleccionado:hover { background: var(--oscuro); }
+.filtro-favoritos { border-color: var(--acento); color: var(--acento); }
+.volver-catalogo {
+  margin: 0 0 24px;
+  padding: 10px 16px;
+  border: 1px solid var(--acento);
+  border-radius: 8px;
+  background: var(--rosa-claro);
+  color: var(--acento);
+  font-size: 13px;
+  font-weight: 700;
+}
+.volver-catalogo:hover { background: var(--rosa); }
+@media (max-width: 1100px) and (min-width: 701px) {
+  .texto-favoritos { display: none; }
+}
+@media (max-width: 700px) {
+  .acciones-navegacion { gap: 6px; }
+  .texto-favoritos { display: none; }
+  .boton-favoritos { padding: 8px; }
+  .simbolo-favoritos { font-size: 21px; }
+  .boton-corazon { width: 46px; height: 46px; }
+}
+@media (max-width: 350px) {
+  .logo { font-size: 21px; }
+  .barra-navegacion { gap: 7px; }
+  .boton-favoritos, .boton-carrito { padding: 6px; }
+}

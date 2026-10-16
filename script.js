@@ -6,9 +6,11 @@
 
 const WHATSAPP_POR_DEFECTO = "51972491860";
 const CLAVE_CARRITO = "nelida-fem-carrito-supabase-v1";
+const CLAVE_FAVORITOS = "nelida-fem-favoritos-v1";
 
 let productos = [];
 let carrito = leerCarrito();
+let favoritos = leerFavoritos();
 let filtroActivo = "todos";
 let numeroWhatsApp = WHATSAPP_POR_DEFECTO;
 
@@ -60,7 +62,58 @@ function guardarCarrito() {
   }
 }
 
-/* 2. UTILIDADES */
+/* 2. FAVORITOS: SE GUARDAN EN ESTE NAVEGADOR */
+
+function leerFavoritos() {
+  try {
+    const guardados = JSON.parse(localStorage.getItem(CLAVE_FAVORITOS) || "[]");
+    if (!Array.isArray(guardados)) return [];
+    return [...new Set(guardados.filter((id) =>
+      typeof id === "string" && id.length > 0 && id.length <= 100
+    ))];
+  } catch (error) {
+    console.warn("No se pudieron recuperar los favoritos:", error);
+    return [];
+  }
+}
+
+function guardarFavoritos() {
+  try {
+    localStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favoritos));
+  } catch (error) {
+    console.warn("No se pudieron guardar los favoritos:", error);
+  }
+}
+
+function esFavorito(id) {
+  return favoritos.includes(String(id));
+}
+
+function actualizarContadorFavoritos() {
+  // El contador incluye únicamente prendas publicadas actualmente.
+  const total = favoritos.filter((id) => !!productoPorId(id)).length;
+  $("contador-favoritos").textContent = String(total);
+  $("abrir-favoritos").setAttribute(
+    "aria-label", `Ver mis prendas favoritas (${total})`
+  );
+}
+
+function alternarFavorito(id) {
+  const producto = productoPorId(id);
+  if (!producto) return;
+
+  const identificador = String(id);
+  if (esFavorito(identificador)) {
+    favoritos = favoritos.filter((actual) => actual !== identificador);
+  } else {
+    favoritos.push(identificador);
+  }
+  guardarFavoritos();
+  actualizarContadorFavoritos();
+  renderizarProductos();
+}
+
+/* 3. UTILIDADES */
 
 function categoriaNormalizada(texto) {
   return String(texto || "")
@@ -217,6 +270,7 @@ function renderizarProductos() {
 
   const visibles = productos.filter((p) =>
     filtroActivo === "todos" ||
+    (filtroActivo === "favoritos" && esFavorito(p.id)) ||
     categoriaNormalizada(p.categoria) === filtroActivo
   );
 
@@ -224,9 +278,11 @@ function renderizarProductos() {
     `${visibles.length} ${visibles.length === 1 ? "producto" : "productos"}`;
 
   $("estado-productos").hidden = visibles.length > 0;
+  $("volver-catalogo").hidden = visibles.length > 0 || filtroActivo !== "favoritos";
   if (!visibles.length) {
-    $("estado-productos").textContent =
-      "No hay publicaciones disponibles en esta categoria.";
+    $("estado-productos").textContent = filtroActivo === "favoritos"
+      ? "Aún no tienes favoritos. Pulsa ♡ en las prendas que te gusten para guardarlas aquí."
+      : "No hay publicaciones disponibles en esta categoría.";
   }
 
   for (const p of visibles) {
@@ -235,6 +291,22 @@ function renderizarProductos() {
     const disponible = p.stock > 0 && p.tallas.length > 0;
 
     foto.append(elemento("span", "insignia", disponible ? "Disponible" : "Agotado"));
+
+    // El corazón guarda la prenda sin agregarla al carrito.
+    const marcado = esFavorito(p.id);
+    const botonFavorito = elemento(
+      "button",
+      marcado ? "boton-corazon seleccionado" : "boton-corazon",
+      marcado ? "♥" : "♡"
+    );
+    botonFavorito.type = "button";
+    botonFavorito.title = marcado ? "Quitar de favoritos" : "Guardar en favoritos";
+    botonFavorito.setAttribute(
+      "aria-label", `${marcado ? "Quitar de" : "Guardar en"} favoritos: ${p.nombre}`
+    );
+    botonFavorito.setAttribute("aria-pressed", String(marcado));
+    botonFavorito.addEventListener("click", () => alternarFavorito(p.id));
+    foto.append(botonFavorito);
 
     const detalles = elemento("div", "producto-informacion");
     detalles.append(
@@ -451,6 +523,7 @@ async function cargarTienda() {
   );
 
   limpiarCarritoDesactualizado();
+  actualizarContadorFavoritos();
   renderizarProductos();
   renderizarCarrito();
 }
@@ -497,6 +570,15 @@ window.addEventListener("DOMContentLoaded", () => {
     });
     renderizarProductos();
   }
+
+  $("abrir-favoritos").addEventListener("click", () => {
+    cambiarFiltro("favoritos");
+    $("productos").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $("volver-catalogo").addEventListener("click", () => {
+    cambiarFiltro("todos");
+  });
 
   document.querySelectorAll(".filtro").forEach((boton) => {
     boton.addEventListener("click", () => cambiarFiltro(boton.dataset.filtro));

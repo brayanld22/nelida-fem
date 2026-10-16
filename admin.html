@@ -219,16 +219,6 @@
           </div>
 
           <div class="bloque-opciones">
-            <h3>Redes sociales</h3>
-            <p class="explicacion">Opcional. Pega enlaces completos que comiencen con https://</p>
-            <div class="grid">
-              <div class="campo"><label for="instagram">Instagram</label><input id="instagram" type="url" placeholder="https://www.instagram.com/..."></div>
-              <div class="campo"><label for="tiktok">TikTok</label><input id="tiktok" type="url" placeholder="https://www.tiktok.com/@..."></div>
-              <div class="campo full"><label for="facebook">Facebook</label><input id="facebook" type="url" placeholder="https://www.facebook.com/..."></div>
-            </div>
-          </div>
-
-          <div class="bloque-opciones">
             <h3>Estilo de colores</h3>
             <div class="campo">
               <label for="tema">Paleta de la tienda</label>
@@ -445,7 +435,7 @@
 
     async function cargarConfiguracion() {
       const { data, error } = await db.from("configuracion")
-        .select("id,anuncio,lema,whatsapp,portada_url,descripcion_portada,titulo_catalogo,subtitulo_catalogo,promocion_activa,promocion_texto,instagram_url,tiktok_url,facebook_url,tema")
+        .select("id,anuncio,lema,whatsapp,portada_url,descripcion_portada,titulo_catalogo,subtitulo_catalogo,promocion_activa,promocion_texto,tema")
         .eq("id", 1).single();
       if (error) throw error;
       configActual = data;
@@ -457,24 +447,9 @@
       $("subtitulo-catalogo").value = data.subtitulo_catalogo || "";
       $("promocion-texto").value = data.promocion_texto || "";
       $("promocion-activa").checked = !!data.promocion_activa;
-      $("instagram").value = data.instagram_url || "";
-      $("tiktok").value = data.tiktok_url || "";
-      $("facebook").value = data.facebook_url || "";
       $("tema").value = ["rosa", "beige", "minimalista"].includes(data.tema) ? data.tema : "rosa";
       $("foto-portada").value = "";
       fotoPreview($("portada-actual"), data.portada_url);
-    }
-
-    function enlaceSocial(id) {
-      const valor = campo(id);
-      if (!valor) return "";
-      try {
-        const url = new URL(valor);
-        if (url.protocol !== "https:") throw new Error("Debes usar https://");
-        return url.href;
-      } catch {
-        throw new Error(`El enlace de ${id} debe ser una URL https:// válida.`);
-      }
     }
 
     $("form-configuracion").addEventListener("submit", async (evento) => {
@@ -496,9 +471,6 @@
           subtitulo_catalogo: campo("subtitulo-catalogo"),
           promocion_activa: $("promocion-activa").checked,
           promocion_texto: campo("promocion-texto"),
-          instagram_url: enlaceSocial("instagram"),
-          tiktok_url: enlaceSocial("tiktok"),
-          facebook_url: enlaceSocial("facebook"),
           tema: campo("tema"),
           whatsapp: numero,
           portada_url: subida?.url || configActual.portada_url
