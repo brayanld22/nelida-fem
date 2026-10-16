@@ -1,0 +1,618 @@
+/* ====================================================
+   NELIDA FEM - ESTILO COMPLETO
+   Portada, catalogo, carrito elegante y diseno movil
+   ==================================================== */
+
+:root {
+  --oscuro: #362731;
+  --oscuro-suave: #624455;
+  --rosa: #f8e9ed;
+  --rosa-claro: #fdf6f8;
+  --rosa-medio: #efd7e2;
+  --acento: #9e4d70;
+  --gris: #786e74;
+  --borde: #ebdfe5;
+  --blanco: #ffffff;
+  --whatsapp: #167a55;
+  --whatsapp-hover: #116246;
+}
+
+/* GENERALES */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--blanco);
+  color: var(--oscuro);
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+button, select { font: inherit; }
+button { cursor: pointer; }
+img { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--acento); outline-offset: 3px; }
+.contenedor { width: min(1080px, calc(100% - 40px)); margin: auto; }
+.etiqueta {
+  color: var(--acento);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+/* BARRA SUPERIOR Y NAVEGACION */
+.anuncio {
+  padding: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--blanco);
+  background: var(--oscuro);
+}
+.encabezado { position: relative; z-index: 2; background: var(--blanco); }
+.barra-navegacion {
+  min-height: 88px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+.logo { font: bold 30px Georgia, serif; white-space: nowrap; }
+.logo em { color: var(--acento); }
+.navegacion { display: flex; gap: 19px; font-size: 12px; }
+.navegacion a:hover { color: var(--acento); }
+.boton-menu { display: none; border: 0; background: none; font-size: 25px; }
+.boton-carrito {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: var(--rosa-claro);
+  color: var(--oscuro);
+  white-space: nowrap;
+  transition: background .2s ease, border-color .2s ease;
+}
+.boton-carrito:hover { background: var(--rosa); border-color: var(--acento); }
+.contador {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--acento);
+  color: var(--blanco);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* BOTONES PRINCIPALES */
+.boton-principal {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 20px;
+  border: 1px solid var(--oscuro);
+  border-radius: 6px;
+  color: var(--blanco);
+  background: var(--oscuro);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  transition: background .2s ease, transform .2s ease;
+}
+.boton-principal:hover:not(:disabled) {
+  background: var(--oscuro-suave);
+  transform: translateY(-1px);
+}
+.boton-principal:disabled {
+  background: #bcb1b7;
+  border-color: #bcb1b7;
+  cursor: not-allowed;
+}
+
+/* PORTADA */
+.portada { display: grid; grid-template-columns: 51% 49%; min-height: 550px; }
+.portada-texto {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: var(--rosa);
+}
+.portada-contenido { width: min(540px, 100%); padding: 50px 38px 50px 28px; }
+.portada h1 {
+  margin: 20px 0 30px;
+  font: bold clamp(48px, 5vw, 73px)/1.02 Georgia, serif;
+  letter-spacing: -1px;
+}
+.portada h1 em { white-space: nowrap; }
+.descripcion-portada {
+  max-width: 390px;
+  color: var(--gris);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+.portada-imagen { height: 550px; overflow: hidden; background: #e7dce0; }
+.portada-imagen img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+
+/* CATALOGO */
+.seccion-productos { padding: 65px 0 85px; }
+.titulo-seccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+}
+.titulo-seccion h2 { margin: 8px 0; font-size: 34px; font-weight: 500; }
+.titulo-seccion span, .subtitulo { color: var(--gris); font-size: 13px; }
+.filtros { display: flex; flex-wrap: wrap; gap: 10px; margin: 25px 0; }
+.filtro {
+  padding: 9px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 24px;
+  background: var(--blanco);
+  color: var(--oscuro);
+  font-size: 12px;
+  transition: background .2s ease, color .2s ease;
+}
+.filtro.activo, .filtro:hover {
+  background: var(--oscuro);
+  border-color: var(--oscuro);
+  color: var(--blanco);
+}
+.estado-productos { color: var(--gris); font-size: 13px; line-height: 1.7; }
+.catalogo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 25px;
+}
+.producto {
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 11px;
+  background: var(--blanco);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.producto:hover { box-shadow: 0 12px 28px #36273112; transform: translateY(-2px); }
+.producto-foto {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 330px;
+  background: linear-gradient(145deg, #f7ebef, #ead8e0);
+}
+.producto-foto img { width: 100%; height: 100%; object-fit: cover; }
+.foto-sustituta { font-size: 84px; opacity: .7; }
+.insignia {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  padding: 7px 11px;
+  background: var(--blanco);
+  color: var(--acento);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 3px;
+}
+.producto-informacion { padding: 22px; }
+.producto-informacion h3 { margin: 8px 0; font-size: 25px; }
+.categoria-producto {
+  color: var(--acento);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.precio { margin: 9px 0; font-size: 19px; font-weight: 700; }
+.descripcion { min-height: 35px; color: var(--gris); font-size: 13px; line-height: 1.6; }
+.producto-informacion label { display: block; margin: 18px 0 7px; font-size: 12px; font-weight: 700; }
+.producto-informacion select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--borde);
+  border-radius: 5px;
+  background: var(--blanco);
+}
+.boton-agregar { width: 100%; margin-top: 15px; }
+.stock-producto { margin: 11px 0 0; color: var(--gris); font-size: 11px; }
+
+/* COMO COMPRAR */
+.como-comprar { padding: 70px 0; text-align: center; background: var(--rosa-claro); }
+.como-comprar h2 { margin: 12px 0 30px; font-size: 32px; }
+.pasos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0; }
+.paso {
+  padding: 25px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--blanco);
+}
+.paso span { color: var(--acento); font-size: 13px; font-weight: 700; }
+.paso h3 { margin: 12px 0; font-size: 20px; }
+.paso p { color: var(--gris); font-size: 13px; line-height: 1.6; }
+.enlace-consulta {
+  display: inline-block;
+  margin: 16px;
+  color: var(--acento);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* PIE DE PAGINA */
+.pie-pagina { padding: 27px 0; background: var(--oscuro); color: var(--blanco); }
+.pie-interior { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.pie-interior .logo { font-size: 25px; }
+.pie-interior small { color: #e4d7df; }
+
+/* ====================================================
+   CARRITO: PANEL ELEGANTE NELIDA FEM
+   Compatible con el HTML y JS que ya tienes
+   ==================================================== */
+
+.ventana-carrito {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(460px, 100%);
+  height: 100dvh;
+  max-width: 100%;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 20px 0 0 20px;
+  color: var(--oscuro);
+  background: var(--blanco);
+  box-shadow: -18px 0 55px #24141d30;
+  overflow: hidden;
+}
+.ventana-carrito[open] { animation: aparecer-carrito .28s ease-out; }
+.ventana-carrito::backdrop {
+  background: #26141e88;
+  backdrop-filter: blur(3px);
+}
+@keyframes aparecer-carrito {
+  from { opacity: .7; transform: translateX(38px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.carrito-contenido {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* CABECERA CON FONDO ROSA */
+.carrito-cabecera {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 29px 28px 25px;
+  border-bottom: 1px solid var(--borde);
+  background: linear-gradient(115deg, #fff4f8, #f8e9ed);
+}
+.carrito-cabecera h2 {
+  margin: 0;
+  font-size: 29px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -.4px;
+}
+.carrito-cabecera button {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #e7cdda;
+  border-radius: 50%;
+  color: var(--oscuro);
+  background: var(--blanco);
+  font-size: 26px;
+  line-height: 1;
+  transition: background .2s ease, transform .2s ease;
+}
+.carrito-cabecera button:hover { background: var(--rosa-medio); transform: rotate(90deg); }
+
+/* LISTA DE PRENDAS: DESPLAZABLE */
+.lista-carrito {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 24px 22px;
+  scrollbar-color: #d9b3c5 transparent;
+  scrollbar-width: thin;
+}
+.lista-carrito::-webkit-scrollbar { width: 6px; }
+.lista-carrito::-webkit-scrollbar-thumb { background: #d9b3c5; border-radius: 10px; }
+.carrito-vacio {
+  margin: 30px 24px;
+  padding: 35px 22px;
+  border: 1px dashed #dabcca;
+  border-radius: 13px;
+  background: var(--rosa-claro);
+  color: var(--gris);
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* TARJETAS DE PRENDAS */
+.item-carrito {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: start;
+  gap: 15px;
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid #f0e3e9;
+  border-radius: 14px;
+  background: var(--blanco);
+  box-shadow: 0 3px 14px #36273109;
+}
+.miniatura-carrito {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 105px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f6e9ef;
+  font-size: 35px;
+}
+.miniatura-carrito img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.miniatura-carrito .foto-sustituta { font-size: 34px; }
+.detalles-carrito { flex: 1; min-width: 0; }
+.detalles-carrito h3 {
+  margin: 0 0 4px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.detalles-carrito p {
+  display: inline-block;
+  margin: 4px 0 10px;
+  padding: 5px 9px;
+  border-radius: 5px;
+  color: var(--acento);
+  background: var(--rosa-claro);
+  font-size: 11px;
+  font-weight: 700;
+}
+.detalles-carrito > strong {
+  display: block;
+  color: var(--oscuro);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* CONTROLES + Y - */
+.controles-cantidad {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 15px;
+}
+.controles-cantidad button:not(.quitar) {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  padding: 0;
+  border: 1px solid #ead7e0;
+  border-radius: 8px;
+  color: var(--oscuro);
+  background: var(--rosa-claro);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background .2s ease;
+}
+.controles-cantidad button:not(.quitar):hover:not(:disabled) {
+  background: var(--rosa-medio);
+}
+.controles-cantidad button:disabled { opacity: .35; cursor: not-allowed; }
+.controles-cantidad > span {
+  display: grid;
+  place-items: center;
+  min-width: 25px;
+  min-height: 31px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.controles-cantidad .quitar {
+  margin-left: auto;
+  padding: 5px 0;
+  border: 0;
+  color: var(--acento);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.controles-cantidad .quitar:hover { color: #722e4c; }
+
+/* PRECIO UNITARIO Y SUBTOTAL DE CADA PRENDA */
+.detalles-carrito .talla-carrito {
+  display: inline-block;
+  margin: 5px 0 11px;
+  padding: 5px 9px;
+  background: var(--rosa-claro);
+  color: var(--acento);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.precio-unitario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 3px 10px;
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--gris);
+}
+.precio-unitario strong {
+  font-size: 13px;
+  color: var(--oscuro);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.subtotal-carrito {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin-top: 14px;
+  padding: 12px 10px;
+  background: var(--rosa-claro);
+  border: 1px solid #f1e1e8;
+  border-radius: 9px;
+  color: var(--acento);
+  font-size: 12px;
+  font-weight: 700;
+}
+.subtotal-carrito strong {
+  color: var(--acento);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+/* RESUMEN FIJO ABAJO */
+.carrito-final {
+  flex-shrink: 0;
+  padding: 20px 25px 22px;
+  border-top: 1px solid var(--borde);
+  background: var(--blanco);
+  box-shadow: 0 -9px 28px #3627310a;
+}
+.total-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid #f0dfeb;
+  border-radius: 10px;
+  background: var(--rosa-claro);
+  font-size: 14px;
+  font-weight: 600;
+}
+.total-fila strong {
+  color: var(--acento);
+  font-size: 21px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.finalizar {
+  display: flex;
+  width: 100%;
+  min-height: 51px;
+  border-radius: 10px;
+  border-color: var(--whatsapp);
+  background: var(--whatsapp);
+  color: var(--blanco);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 5px 14px #167a5526;
+}
+.finalizar:hover:not(.inactivo) {
+  background: var(--whatsapp-hover);
+  border-color: var(--whatsapp-hover);
+  transform: translateY(-1px);
+}
+.finalizar.inactivo, .finalizar.inactivo:hover {
+  background: #c5b9c0;
+  border-color: #c5b9c0;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+.carrito-final small {
+  display: block;
+  margin-top: 12px;
+  color: var(--gris);
+  font-size: 11px;
+  line-height: 1.65;
+  text-align: center;
+}
+
+/* TABLETAS */
+@media (max-width: 920px) {
+  .catalogo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .navegacion { gap: 10px; }
+}
+
+/* CELULARES */
+@media (max-width: 700px) {
+  .barra-navegacion { min-height: 74px; gap: 10px; }
+  .logo { font-size: 24px; }
+  .boton-menu { display: block; }
+  .boton-carrito { padding: 8px; }
+  .texto-carrito { display: none; }
+  .navegacion {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: var(--blanco);
+    box-shadow: 0 8px 15px #0002;
+    flex-direction: column;
+  }
+  .navegacion.abierto { display: flex; }
+  .navegacion a { padding: 8px 0; }
+  .portada { display: flex; flex-direction: column; }
+  .portada-imagen { order: -1; height: 300px; }
+  .portada-contenido { padding: 38px 25px 45px; }
+  .portada h1 { font-size: clamp(45px, 11vw, 65px); }
+  .titulo-seccion h2 { font-size: 27px; }
+  .catalogo { grid-template-columns: 1fr; }
+  .producto-foto { height: 350px; }
+  .pasos { grid-template-columns: 1fr; }
+  .pie-interior { flex-direction: column; text-align: center; }
+  .seccion-productos { padding: 48px 0 70px; }
+  .ventana-carrito {
+    width: 100%;
+    border-radius: 0;
+  }
+  .carrito-cabecera { padding: 24px 20px 21px; }
+  .carrito-cabecera h2 { font-size: 26px; }
+  .lista-carrito { padding: 5px 12px 17px; }
+  .carrito-final { padding: 15px 17px 20px; }
+  .carrito-vacio { margin: 25px 16px; }
+}
+
+@media (max-width: 370px) {
+  .item-carrito { grid-template-columns: 70px minmax(0, 1fr); padding: 10px; gap: 10px; }
+  .miniatura-carrito { width: 70px; height: 90px; }
+  .controles-cantidad .quitar { margin-left: 0; }
+  .total-fila strong { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
