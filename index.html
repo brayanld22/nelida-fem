@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,32 +11,20 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- CONEXIÓN CON SUPABASE -->
+  <!-- El orden importa: primero la librería, luego la configuración y el código -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="supabase-config.js" defer></script>
   <script src="script.js" defer></script>
+  <script src="personalizacion.js" defer></script>
 </head>
-
 <body>
-  <!-- ANUNCIO SUPERIOR -->
-  <div class="anuncio" id="anuncio">
-    ✨ Nueva colección disponible · Descubre tu próximo outfit favorito
-  </div>
+  <div class="anuncio" id="anuncio">✨ Nueva colección disponible · Descubre tu próximo outfit favorito</div>
 
-  <!-- ENCABEZADO -->
   <header class="encabezado" id="inicio">
     <div class="contenedor barra-navegacion">
-
-      <button class="boton-menu" id="abrir-menu"
-              type="button" aria-label="Abrir menú"
-              aria-controls="menu" aria-expanded="false">
-        ☰
-      </button>
-
-      <a href="#inicio" class="logo">
-        Nelida <em>FEM</em>
-      </a>
-
+      <button class="boton-menu" id="abrir-menu" type="button"
+              aria-label="Abrir menú" aria-controls="menu" aria-expanded="false">☰</button>
+      <a href="#inicio" class="logo">Nelida <em>FEM</em></a>
       <nav class="navegacion" id="menu" aria-label="Menú principal">
         <a href="#inicio">Inicio</a>
         <a href="#productos" data-filtro="todos">Nueva colección</a>
@@ -46,233 +33,94 @@
         <a href="#productos" data-filtro="vestidos">Vestidos</a>
         <a href="#como-comprar">Cómo comprar</a>
       </nav>
-
-      <button id="abrir-carrito"
-              class="boton-carrito" type="button"
-              aria-haspopup="dialog"
-              aria-controls="ventana-carrito">
-        🛍️
-        <span class="texto-carrito">Carrito</span>
+      <button id="abrir-carrito" class="boton-carrito" type="button"
+              aria-haspopup="dialog" aria-controls="ventana-carrito">
+        🛍️ <span class="texto-carrito">Carrito</span>
         <span id="contador-carrito" class="contador">0</span>
       </button>
-
     </div>
   </header>
 
   <main>
-
-    <!-- PORTADA -->
     <section class="portada" aria-labelledby="titulo-portada">
-
       <div class="portada-texto">
         <div class="portada-contenido">
-
           <p class="etiqueta">ESTILO QUE VA CONTIGO</p>
-
-          <h1 id="titulo-portada">
-            Tu vibra.<br>
-            Tu estilo.<br>
-            <em>Tu momento.</em>
-          </h1>
-
-          <p class="descripcion-portada">
-            Prendas urbanas, casuales y femeninas
-            para sentirte auténtica cada día.
-            Combínalas a tu manera.
-          </p>
-
-          <a href="#productos" class="boton-principal">
-            Explorar colección ↗
-          </a>
-
+          <h1 id="titulo-portada">Tu vibra.<br>Tu estilo.<br><em>Tu momento.</em></h1>
+          <p class="descripcion-portada" id="descripcion-portada">Prendas urbanas, casuales y femeninas para sentirte auténtica cada día. Combínalas a tu manera.</p>
+          <a href="#productos" class="boton-principal">Explorar colección ↗</a>
         </div>
       </div>
-
-      <!-- IMAGEN DE LA CHICA -->
       <div class="portada-imagen">
-        <img
-          id="imagen-portada"
-          src="assets/portada-referencia.jpg.jpg"
-          alt="Moda femenina en la portada de Nelida FEM">
+        <!-- Usamos exactamente el nombre que guardaste en assets -->
+        <img id="imagen-portada" src="assets/portada-referencia.jpg.jpg"
+             alt="Moda femenina en la portada de Nelida FEM">
       </div>
-
     </section>
 
-    <!-- CATÁLOGO CONECTADO A SUPABASE -->
     <section id="productos" class="seccion-productos contenedor">
-
       <div class="titulo-seccion">
         <div>
           <p class="etiqueta">SELECCIONADO PARA TI</p>
-          <h2>Encuentra tu próximo favorito</h2>
-          <p class="subtitulo">Nuestras publicaciones disponibles.</p>
+          <h2 id="titulo-catalogo">Encuentra tu próximo favorito</h2>
+          <p class="subtitulo" id="subtitulo-catalogo">Nuestras publicaciones disponibles.</p>
         </div>
-
         <span id="cantidad-productos">Cargando...</span>
       </div>
 
-      <!-- FILTROS -->
+      <div id="promo-catalogo" class="promo-catalogo" hidden></div>
+
       <div class="filtros" role="group" aria-label="Filtrar por categoría">
-
-        <button type="button" class="filtro activo"
-                data-filtro="todos" aria-pressed="true">
-          Todos
-        </button>
-
-        <button type="button" class="filtro"
-                data-filtro="tops" aria-pressed="false">
-          Tops
-        </button>
-
-        <button type="button" class="filtro"
-                data-filtro="pantalones" aria-pressed="false">
-          Pantalones
-        </button>
-
-        <button type="button" class="filtro"
-                data-filtro="vestidos" aria-pressed="false">
-          Vestidos
-        </button>
-
+        <button type="button" class="filtro activo" data-filtro="todos" aria-pressed="true">Todos</button>
+        <button type="button" class="filtro" data-filtro="tops" aria-pressed="false">Tops</button>
+        <button type="button" class="filtro" data-filtro="pantalones" aria-pressed="false">Pantalones</button>
+        <button type="button" class="filtro" data-filtro="vestidos" aria-pressed="false">Vestidos</button>
       </div>
 
-      <!-- MENSAJE DE CARGA -->
-      <p id="estado-productos"
-         class="estado-productos"
-         role="status"
-         aria-live="polite">
-        Cargando prendas desde Supabase...
-      </p>
-
-      <!-- AQUÍ APARECERÁN LAS PRENDAS DE SUPABASE -->
+      <p id="estado-productos" class="estado-productos" role="status" aria-live="polite">Cargando prendas desde Supabase...</p>
+      <!-- Las publicaciones se crean automáticamente desde la tabla productos -->
       <div id="catalogo" class="catalogo"></div>
-
     </section>
 
-    <!-- CÓMO COMPRAR -->
     <section id="como-comprar" class="como-comprar">
-
       <div class="contenedor">
-
         <p class="etiqueta">COMPRA FÁCIL</p>
         <h2>¿Cómo comprar en Nelida FEM?</h2>
-
         <div class="pasos">
-
-          <div class="paso">
-            <span>01</span>
-            <h3>Elige tu ropa</h3>
-            <p>Selecciona la prenda y tu talla.</p>
-          </div>
-
-          <div class="paso">
-            <span>02</span>
-            <h3>Agrega al carrito</h3>
-            <p>Revisa cantidades y el total.</p>
-          </div>
-
-          <div class="paso">
-            <span>03</span>
-            <h3>Finaliza por WhatsApp</h3>
-            <p>
-              Envía el pedido y coordina el pago
-              con la encargada.
-            </p>
-          </div>
-
+          <div class="paso"><span>01</span><h3>Elige tu ropa</h3><p>Selecciona la prenda y tu talla.</p></div>
+          <div class="paso"><span>02</span><h3>Agrega al carrito</h3><p>Revisa cantidades y el total.</p></div>
+          <div class="paso"><span>03</span><h3>Finaliza por WhatsApp</h3><p>Envía el pedido y coordina el pago con la encargada.</p></div>
         </div>
-
-        <button id="carrito-inferior"
-                type="button"
-                class="boton-principal">
-          Ver mi carrito 🛍️
-        </button>
-
-        <a id="contacto-whatsapp"
-           class="enlace-consulta"
-           href="https://wa.me/51972491860"
-           target="_blank"
-           rel="noopener noreferrer">
-          Consultar por WhatsApp ↗
-        </a>
-
+        <button id="carrito-inferior" type="button" class="boton-principal">Ver mi carrito 🛍️</button>
+        <div id="redes-sociales" class="redes-sociales" hidden></div>
+        <a id="contacto-whatsapp" class="enlace-consulta"
+           href="https://wa.me/51972491860" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp ↗</a>
       </div>
     </section>
-
   </main>
 
-  <!-- PIE DE PÁGINA -->
   <footer class="pie-pagina">
-
     <div class="contenedor pie-interior">
-      <a href="#inicio" class="logo">
-        Nelida <em>FEM</em>
-      </a>
-
+      <a href="#inicio" class="logo">Nelida <em>FEM</em></a>
       <small>© 2026 Nelida FEM · Moda femenina</small>
     </div>
-
   </footer>
 
-  <!-- VENTANA DEL CARRITO -->
-  <dialog id="ventana-carrito"
-          class="ventana-carrito"
-          aria-labelledby="titulo-carrito">
-
+  <dialog id="ventana-carrito" class="ventana-carrito" aria-labelledby="titulo-carrito">
     <div class="carrito-contenido">
-
       <div class="carrito-cabecera">
-
         <h2 id="titulo-carrito">Mi carrito 🛍️</h2>
-
-        <button id="cerrar-carrito"
-                type="button"
-                aria-label="Cerrar carrito">
-          ×
-        </button>
-
+        <button id="cerrar-carrito" type="button" aria-label="Cerrar carrito">×</button>
       </div>
-
-      <!-- CARRITO VACÍO -->
-      <p id="carrito-vacio" class="carrito-vacio">
-        Tu carrito está vacío.
-        ¡Agrega tu prenda favorita!
-      </p>
-
-      <!-- PRENDAS AGREGADAS -->
-      <div id="lista-carrito"
-           class="lista-carrito"
-           aria-live="polite">
-      </div>
-
-      <!-- TOTAL -->
+      <p id="carrito-vacio" class="carrito-vacio">Tu carrito está vacío. ¡Agrega tu prenda favorita!</p>
+      <div id="lista-carrito" class="lista-carrito" aria-live="polite"></div>
       <div class="carrito-final">
-
-        <div class="total-fila">
-          <span>Total de prendas:</span>
-          <strong id="total-carrito">S/ 0.00</strong>
-        </div>
-
-        <!-- ENLACE WHATSAPP -->
-        <a id="finalizar-pedido"
-           class="boton-principal finalizar inactivo"
-           href="#"
-           target="_blank"
-           rel="noopener noreferrer"
-           aria-disabled="true">
-          Finalizar por WhatsApp ↗
-        </a>
-
-        <small>
-          Se abrirá WhatsApp con tu pedido escrito.
-          La clienta debe pulsar Enviar;
-          el pago se coordina con la encargada.
-        </small>
-
+        <div class="total-fila"><span>Total de prendas:</span><strong id="total-carrito">S/ 0.00</strong></div>
+        <a id="finalizar-pedido" class="boton-principal finalizar inactivo"
+           href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">Finalizar por WhatsApp ↗</a>
+        <small>Se abrirá WhatsApp con tu pedido escrito. La clienta debe pulsar Enviar; el pago se coordina con la encargada.</small>
       </div>
     </div>
-
   </dialog>
-
 </body>
 </html>

@@ -616,3 +616,18 @@ h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
     transition-duration: .01ms !important;
   }
 }
+
+/* CONTENIDO EDITABLE DESDE EL ADMINISTRADOR */
+.portada h1 { white-space: pre-line; }
+.promo-catalogo {
+  margin: 23px 0 3px; padding: 17px 20px; border-radius: 9px;
+  background: var(--rosa-claro); border: 1px solid var(--borde);
+  color: var(--oscuro); font-weight: 700; text-align: center; line-height: 1.6;
+}
+.redes-sociales { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 25px 0 7px; }
+.redes-sociales a {
+  display: inline-flex; padding: 11px 18px; border-radius: 22px;
+  border: 1px solid var(--borde); background: white;
+  color: var(--oscuro); font-size: 13px; font-weight: 700;
+}
+.redes-sociales a:hover { border-color: var(--acento); color: var(--acento); }

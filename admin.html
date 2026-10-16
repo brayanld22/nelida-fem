@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administración | Nelida FEM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --vino:#362731; --rosa:#f8e9ed; --fondo:#fdf9fb; --acento:#9e4d70; --linea:#eddee6; --gris:#746a70; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'DM Sans',Arial,sans-serif; color:var(--vino); background:var(--fondo); }
+    [hidden] { display:none !important; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; }
+    a { color:inherit; text-decoration:none; }
+    h1,h2,h3 { font-family:'Playfair Display',Georgia,serif; }
+    .topbar { background:var(--vino); color:white; padding:17px 24px; display:flex; justify-content:space-between; align-items:center; gap:15px; }
+    .marca { font:bold 27px Georgia,serif; }
+    .marca em { color:#e9a9c2; }
+    .topbar a:not(.marca) { font-size:13px; }
+    .contenedor { max-width:1080px; margin:auto; padding:38px 22px 70px; }
+    .tarjeta { background:#fff; border:1px solid var(--linea); border-radius:12px; padding:24px; margin-bottom:23px; box-shadow:0 5px 20px #36273108; }
+    .acceso { max-width:470px; margin:45px auto; }
+    .acceso h1 { margin:6px 0 10px; font-size:32px; }
+    .eyebrow { color:var(--acento); letter-spacing:1.8px; font-size:11px; font-weight:700; }
+    h1 { font-size:34px; margin:0 0 9px; }
+    h2 { font-size:24px; margin:0 0 9px; }
+    .muted { color:var(--gris); line-height:1.6; font-size:13px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; }
+    .campo { display:grid; gap:7px; margin-top:15px; }
+    .campo.full { grid-column:1/-1; }
+    label { font-size:12px; font-weight:700; }
+    input,select,textarea { width:100%; border:1px solid #dacbd3; background:white; border-radius:7px; padding:11px 12px; color:var(--vino); }
+    textarea { min-height:85px; resize:vertical; }
+    input[type=checkbox] { width:auto; }
+    input[type=file] { font-size:12px; }
+    .checks { display:flex; align-items:center; gap:10px; margin-top:20px; }
+    .checks label { font-size:13px; }
+    .botones { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    .boton { border:0; background:var(--vino); color:white; padding:11px 17px; border-radius:7px; font-weight:700; font-size:12px; }
+    .boton:disabled { opacity:.5; cursor:wait; }
+    .boton-alt { border:1px solid var(--linea); background:white; color:var(--vino); }
+    .boton-peligro { background:#fff3f5; color:#a43c56; border:1px solid #efc3cf; }
+    .mensaje { min-height:22px; margin-top:16px; color:var(--acento); font-size:13px; line-height:1.5; }
+    .error { color:#a12646; }
+    .cabecera-panel { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:24px; }
+    .productos { display:grid; gap:11px; margin-top:19px; }
+    .producto { display:flex; align-items:center; gap:16px; border:1px solid var(--linea); border-radius:9px; padding:12px; }
+    .miniatura { width:75px; height:90px; flex-shrink:0; background:var(--rosa); border-radius:6px; display:grid; place-items:center; overflow:hidden; font-size:32px; }
+    .miniatura img { width:100%; height:100%; object-fit:cover; }
+    .datos { flex:1; min-width:0; }
+    .datos strong { display:block; margin-bottom:7px; }
+    .datos small { display:block; color:var(--gris); line-height:1.6; }
+    .acciones { display:flex; flex-wrap:wrap; gap:7px; }
+    .navegacion-admin { display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 28px; }
+    .navegacion-admin a { padding:10px 14px; border:1px solid var(--linea); background:#fff; border-radius:8px; font-size:12px; font-weight:700; }
+    .navegacion-admin a:hover { background:var(--rosa); }
+    .bloque-opciones { margin-top:22px; padding-top:19px; border-top:1px solid var(--linea); }
+    .bloque-opciones h3 { margin:0 0 7px; font-size:20px; }
+    .explicacion { color:var(--gris); font-size:12px; line-height:1.55; }
+    .titulo-campo { display:block; margin-top:16px; font-size:12px; }
+    .chip-estado { border-radius:14px; padding:4px 9px; background:var(--rosa); display:inline-block; }
+    .imagen-actual { max-width:140px; max-height:120px; margin-top:8px; border-radius:6px; object-fit:cover; }
+    @media(max-width:700px) { .grid { grid-template-columns:1fr; } .campo.full { grid-column:auto; } .producto { flex-wrap:wrap; } .acciones { width:100%; justify-content:flex-end; } .contenedor { padding-top:25px; } }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="supabase-config.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="index.html" class="marca">Nelida <em>FEM</em></a>
+    <a href="index.html">↗ Ver la tienda</a>
+  </header>
+
+  <main class="contenedor">
+    <p id="estado-inicial" class="muted">Comprobando acceso a la administración...</p>
+
+    <section id="pantalla-login" class="tarjeta acceso" hidden>
+      <p class="eyebrow">SOLO ADMINISTRADORES</p>
+      <h1>Iniciar sesión</h1>
+      <p class="muted">Ingresa con la cuenta que creaste en Supabase Authentication.</p>
+      <form id="form-login">
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" autocomplete="username" required>
+        </div>
+        <div class="campo">
+          <label for="clave">Contraseña</label>
+          <input type="password" id="clave" autocomplete="current-password" required>
+        </div>
+        <div class="botones"><button id="boton-login" class="boton" type="submit">Entrar al panel</button></div>
+      </form>
+      <p id="mensaje-login" class="mensaje" role="status"></p>
+    </section>
+
+    <div id="panel" hidden>
+      <div class="cabecera-panel">
+        <div>
+          <p class="eyebrow">PANEL PRIVADO</p>
+          <h1>Administración de Nelida FEM</h1>
+          <p id="usuario-actual" class="muted"></p>
+        </div>
+        <button id="cerrar-sesion" type="button" class="boton boton-alt">Cerrar sesión</button>
+      </div>
+
+      <nav class="navegacion-admin" aria-label="Secciones del administrador">
+        <a href="#seccion-publicaciones">Publicar prendas</a>
+        <a href="#lista-publicaciones">Mis publicaciones</a>
+        <a href="#personalizar-tienda">Personalizar tienda</a>
+      </nav>
+
+      <section class="tarjeta" id="seccion-publicaciones">
+        <h2>Publicar o editar una prenda</h2>
+        <p class="muted">Los cambios se guardarán en Supabase y aparecerán en el catálogo al actualizar la tienda.</p>
+        <form id="form-producto">
+          <input type="hidden" id="editar-id">
+          <div class="grid">
+            <div class="campo">
+              <label for="nombre">Nombre</label>
+              <input id="nombre" maxlength="80" required placeholder="Ej.: Blusa Alba">
+            </div>
+            <div class="campo">
+              <label for="precio">Precio en soles</label>
+              <input id="precio" type="number" min="0.01" step="0.01" required>
+            </div>
+            <div class="campo">
+              <label for="categoria">Categoría</label>
+              <select id="categoria">
+                <option>Tops</option><option>Pantalones</option><option>Vestidos</option><option>Conjuntos</option><option>Otros</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="stock">Stock</label>
+              <input id="stock" type="number" min="0" step="1" required value="1">
+            </div>
+            <div class="campo">
+              <label for="tallas">Tallas (separadas por comas)</label>
+              <input id="tallas" value="S, M, L" required>
+            </div>
+            <div class="campo">
+              <label for="foto">Fotografía (JPG, PNG o WEBP; máximo 5 MB)</label>
+              <input id="foto" type="file" accept="image/jpeg,image/png,image/webp">
+              <small class="muted">Si editas y no eliges una foto nueva, se conservará la anterior.</small>
+              <img id="foto-actual" class="imagen-actual" hidden alt="Fotografía actual de la prenda">
+            </div>
+            <div class="campo full">
+              <label for="descripcion">Descripción</label>
+              <textarea id="descripcion" maxlength="400"></textarea>
+            </div>
+          </div>
+          <div class="checks">
+            <input id="activo" type="checkbox" checked>
+            <label for="activo">Publicación visible para las clientas</label>
+          </div>
+          <div class="botones">
+            <button class="boton" id="guardar-producto" type="submit">Publicar prenda</button>
+            <button class="boton boton-alt" id="cancelar-edicion" type="button">Limpiar formulario</button>
+          </div>
+        </form>
+        <p id="mensaje-producto" class="mensaje" role="status"></p>
+      </section>
+
+      <section class="tarjeta" id="lista-publicaciones">
+        <h2>Publicaciones guardadas</h2>
+        <p class="muted">Selecciona «Editar» para cambiar precios, tallas, fotos o disponibilidad.</p>
+        <div id="lista-productos" class="productos"></div>
+        <p id="sin-productos" class="muted" hidden>Todavía no hay publicaciones.</p>
+      </section>
+
+      <section class="tarjeta" id="personalizar-tienda">
+        <h2>Personalizar la tienda</h2>
+        <p class="muted">Estos cambios también se verán en index.html. No es necesario editar el código para modificar estos textos.</p>
+        <form id="form-configuracion">
+          <div class="grid">
+            <div class="campo full">
+              <label for="anuncio">Anuncio superior</label>
+              <input id="anuncio" maxlength="180">
+            </div>
+            <div class="campo">
+              <label for="lema">Título de portada</label>
+              <input id="lema" maxlength="120">
+            </div>
+            <div class="campo full">
+              <label for="descripcion-portada">Descripción debajo del título</label>
+              <textarea id="descripcion-portada" maxlength="450" placeholder="Describe tu estilo y tu marca"></textarea>
+            </div>
+            <div class="campo">
+              <label for="whatsapp">WhatsApp con prefijo de país</label>
+              <input id="whatsapp" inputmode="numeric" pattern="[0-9]{10,15}" required>
+            </div>
+            <div class="campo full">
+              <label for="foto-portada">Cambiar fotografía de portada (opcional)</label>
+              <input id="foto-portada" type="file" accept="image/jpeg,image/png,image/webp">
+              <img id="portada-actual" class="imagen-actual" hidden alt="Portada actual">
+            </div>
+          </div>
+          <div class="bloque-opciones">
+            <h3>Catálogo y promociones</h3>
+            <div class="grid">
+              <div class="campo">
+                <label for="titulo-catalogo">Título del catálogo</label>
+                <input id="titulo-catalogo" maxlength="110">
+              </div>
+              <div class="campo">
+                <label for="subtitulo-catalogo">Texto bajo el título</label>
+                <input id="subtitulo-catalogo" maxlength="180">
+              </div>
+              <div class="campo full">
+                <label for="promocion-texto">Anuncio especial o promoción</label>
+                <input id="promocion-texto" maxlength="220" placeholder="Ej.: Descuentos especiales esta semana">
+              </div>
+            </div>
+            <div class="checks">
+              <input id="promocion-activa" type="checkbox">
+              <label for="promocion-activa">Mostrar este anuncio en el catálogo</label>
+            </div>
+            <p class="explicacion">El anuncio no modifica automáticamente los precios de las prendas.</p>
+          </div>
+
+          <div class="bloque-opciones">
+            <h3>Redes sociales</h3>
+            <p class="explicacion">Opcional. Pega enlaces completos que comiencen con https://</p>
+            <div class="grid">
+              <div class="campo"><label for="instagram">Instagram</label><input id="instagram" type="url" placeholder="https://www.instagram.com/..."></div>
+              <div class="campo"><label for="tiktok">TikTok</label><input id="tiktok" type="url" placeholder="https://www.tiktok.com/@..."></div>
+              <div class="campo full"><label for="facebook">Facebook</label><input id="facebook" type="url" placeholder="https://www.facebook.com/..."></div>
+            </div>
+          </div>
+
+          <div class="bloque-opciones">
+            <h3>Estilo de colores</h3>
+            <div class="campo">
+              <label for="tema">Paleta de la tienda</label>
+              <select id="tema">
+                <option value="rosa">Rosado elegante (actual)</option>
+                <option value="beige">Beige y nude</option>
+                <option value="minimalista">Blanco y negro minimalista</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="botones"><button id="guardar-config" class="boton" type="submit">Guardar cambios de la página</button></div>
+        </form>
+        <p id="mensaje-config" class="mensaje" role="status"></p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+    const $ = (id) => document.getElementById(id);
+    const BUCKET = "nelida-productos";
+    let db;
+    let publicaciones = [];
+    let imagenProductoActual = "";
+    let configActual = null;
+
+    function informar(id, texto, error = false) {
+      const nodo = $(id);
+      nodo.textContent = texto;
+      nodo.classList.toggle("error", error);
+    }
+    function soles(valor) { return `S/ ${Number(valor).toFixed(2)}`; }
+    function campo(id) { return $(id).value.trim(); }
+    function mostrar(id, visible) { $(id).hidden = !visible; }
+    function texto(elemento, clase, contenido) {
+      const el = document.createElement(elemento);
+      if (clase) el.className = clase;
+      el.textContent = contenido;
+      return el;
+    }
+    function fotoPreview(img, ruta) {
+      if (/^(https:\/\/|assets\/)/i.test(ruta || "")) {
+        img.src = ruta;
+        img.hidden = false;
+        img.onerror = () => { img.hidden = true; };
+      } else {
+        img.hidden = true;
+        img.removeAttribute("src");
+      }
+    }
+
+    async function esAdministrador(usuario) {
+      const { data, error } = await db.from("administradores")
+        .select("usuario").eq("usuario", usuario.id).maybeSingle();
+      if (error) throw error;
+      return !!data;
+    }
+
+    async function mostrarAcceso() {
+      const { data: { user }, error } = await db.auth.getUser();
+      if (error && user) throw error;
+      if (!user) {
+        mostrar("pantalla-login", true);
+        mostrar("panel", false);
+        return;
+      }
+      const autorizado = await esAdministrador(user);
+      if (!autorizado) {
+        await db.auth.signOut();
+        mostrar("pantalla-login", true);
+        mostrar("panel", false);
+        informar("mensaje-login", "Tu cuenta no está autorizada como administradora.", true);
+        return;
+      }
+      mostrar("pantalla-login", false);
+      mostrar("panel", true);
+      $("usuario-actual").textContent = `Sesión iniciada: ${user.email || "Administrador"}`;
+      await Promise.all([cargarProductos(), cargarConfiguracion()]);
+    }
+
+    async function subirImagen(archivo) {
+      if (!archivo) return null;
+      const extensiones = {
+        "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"
+      };
+      const extension = extensiones[archivo.type];
+      if (!extension) throw new Error("La imagen debe ser JPG, PNG o WEBP.");
+      if (archivo.size > 5 * 1024 * 1024) throw new Error("La imagen supera los 5 MB.");
+      const ruta = `productos/${crypto.randomUUID()}.${extension}`;
+      const { error } = await db.storage.from(BUCKET).upload(ruta, archivo, {
+        contentType: archivo.type, cacheControl: "3600", upsert: false
+      });
+      if (error) throw error;
+      const { data } = db.storage.from(BUCKET).getPublicUrl(ruta);
+      return { url: data.publicUrl, ruta };
+    }
+
+    async function cargarProductos() {
+      const { data, error } = await db.from("productos")
+        .select("id,nombre,descripcion,categoria,precio,tallas,stock,imagen_url,activo")
+        .order("creado_en", { ascending: false });
+      if (error) throw error;
+      publicaciones = data || [];
+      const lista = $("lista-productos");
+      lista.replaceChildren();
+      mostrar("sin-productos", publicaciones.length === 0);
+      for (const p of publicaciones) {
+        const fila = texto("div", "producto", "");
+        const mini = texto("div", "miniatura", "👚");
+        if (p.imagen_url) {
+          const img = document.createElement("img");
+          img.alt = p.nombre;
+          img.src = p.imagen_url;
+          img.onerror = () => mini.replaceChildren(texto("span", "", "👚"));
+          mini.replaceChildren(img);
+        }
+        const datos = texto("div", "datos", "");
+        datos.append(texto("strong", "", p.nombre));
+        datos.append(texto("small", "", `${p.categoria} · ${soles(p.precio)} · Stock: ${p.stock} · ${p.activo ? "Visible" : "Oculto"}`));
+        const acciones = texto("div", "acciones", "");
+        const editar = texto("button", "boton boton-alt", "Editar");
+        editar.type = "button";
+        editar.onclick = () => editarPublicacion(p);
+        const eliminar = texto("button", "boton boton-peligro", "Eliminar");
+        eliminar.type = "button";
+        eliminar.onclick = () => eliminarPublicacion(p);
+        acciones.append(editar, eliminar);
+        fila.append(mini, datos, acciones);
+        lista.append(fila);
+      }
+    }
+
+    function limpiarFormulario() {
+      $("form-producto").reset();
+      $("editar-id").value = "";
+      $("stock").value = "1";
+      $("tallas").value = "S, M, L";
+      $("activo").checked = true;
+      imagenProductoActual = "";
+      $("foto-actual").hidden = true;
+      $("guardar-producto").textContent = "Publicar prenda";
+    }
+
+    function editarPublicacion(p) {
+      $("editar-id").value = p.id;
+      $("nombre").value = p.nombre;
+      $("precio").value = p.precio;
+      $("categoria").value = p.categoria;
+      $("stock").value = p.stock;
+      $("tallas").value = (p.tallas || []).join(", ");
+      $("descripcion").value = p.descripcion || "";
+      $("activo").checked = p.activo;
+      $("foto").value = "";
+      imagenProductoActual = p.imagen_url || "";
+      fotoPreview($("foto-actual"), imagenProductoActual);
+      $("guardar-producto").textContent = "Guardar cambios";
+      $("seccion-publicaciones").scrollIntoView({ behavior: "smooth" });
+    }
+
+    async function eliminarPublicacion(p) {
+      if (!confirm(`¿Eliminar definitivamente «${p.nombre}» del catálogo?`)) return;
+      try {
+        const { error } = await db.from("productos").delete().eq("id", p.id);
+        if (error) throw error;
+        if ($("editar-id").value === p.id) limpiarFormulario();
+        await cargarProductos();
+        informar("mensaje-producto", "Publicación eliminada del catálogo.");
+      } catch (error) {
+        informar("mensaje-producto", `No se pudo eliminar: ${error.message}`, true);
+      }
+    }
+
+    $("form-producto").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const boton = $("guardar-producto");
+      boton.disabled = true;
+      informar("mensaje-producto", "Guardando publicación...");
+      let subida = null;
+      try {
+        const tallas = [...new Set(campo("tallas").split(",").map(t => t.trim().toUpperCase()).filter(Boolean))];
+        const precio = Number($("precio").value);
+        const stock = Number($("stock").value);
+        if (!campo("nombre") || !Number.isFinite(precio) || precio <= 0 || !Number.isInteger(stock) || stock < 0 || !tallas.length) {
+          throw new Error("Revisa el nombre, el precio, las tallas y el stock.");
+        }
+        const archivo = $("foto").files[0];
+        if (archivo) subida = await subirImagen(archivo);
+        const datos = {
+          nombre: campo("nombre"), descripcion: campo("descripcion"),
+          categoria: campo("categoria"), precio, tallas, stock,
+          activo: $("activo").checked,
+          imagen_url: subida?.url || imagenProductoActual
+        };
+        const id = $("editar-id").value;
+        const respuesta = id
+          ? await db.from("productos").update(datos).eq("id", id)
+          : await db.from("productos").insert(datos);
+        if (respuesta.error) throw respuesta.error;
+        limpiarFormulario();
+        await cargarProductos();
+        informar("mensaje-producto", "¡Publicación guardada en Supabase! Abre la tienda y actualízala para verla. 💗");
+      } catch (error) {
+        informar("mensaje-producto", `Error al guardar: ${error.message}`, true);
+        if (subida?.ruta) {
+          // Intenta retirar la imagen si no se pudo guardar la publicación.
+          await db.storage.from(BUCKET).remove([subida.ruta]);
+        }
+      } finally {
+        boton.disabled = false;
+      }
+    });
+    $("cancelar-edicion").addEventListener("click", limpiarFormulario);
+
+    async function cargarConfiguracion() {
+      const { data, error } = await db.from("configuracion")
+        .select("id,anuncio,lema,whatsapp,portada_url,descripcion_portada,titulo_catalogo,subtitulo_catalogo,promocion_activa,promocion_texto,instagram_url,tiktok_url,facebook_url,tema")
+        .eq("id", 1).single();
+      if (error) throw error;
+      configActual = data;
+      $("anuncio").value = data.anuncio || "";
+      $("lema").value = data.lema || "";
+      $("whatsapp").value = data.whatsapp || "51972491860";
+      $("descripcion-portada").value = data.descripcion_portada || "";
+      $("titulo-catalogo").value = data.titulo_catalogo || "";
+      $("subtitulo-catalogo").value = data.subtitulo_catalogo || "";
+      $("promocion-texto").value = data.promocion_texto || "";
+      $("promocion-activa").checked = !!data.promocion_activa;
+      $("instagram").value = data.instagram_url || "";
+      $("tiktok").value = data.tiktok_url || "";
+      $("facebook").value = data.facebook_url || "";
+      $("tema").value = ["rosa", "beige", "minimalista"].includes(data.tema) ? data.tema : "rosa";
+      $("foto-portada").value = "";
+      fotoPreview($("portada-actual"), data.portada_url);
+    }
+
+    function enlaceSocial(id) {
+      const valor = campo(id);
+      if (!valor) return "";
+      try {
+        const url = new URL(valor);
+        if (url.protocol !== "https:") throw new Error("Debes usar https://");
+        return url.href;
+      } catch {
+        throw new Error(`El enlace de ${id} debe ser una URL https:// válida.`);
+      }
+    }
+
+    $("form-configuracion").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const boton = $("guardar-config");
+      boton.disabled = true;
+      informar("mensaje-config", "Guardando configuración...");
+      let subida = null;
+      try {
+        const numero = campo("whatsapp").replace(/\D/g, "");
+        if (!/^\d{10,15}$/.test(numero)) throw new Error("El número de WhatsApp debe incluir prefijo de país.");
+        const archivo = $("foto-portada").files[0];
+        if (archivo) subida = await subirImagen(archivo);
+        const datos = {
+          anuncio: campo("anuncio"),
+          lema: campo("lema"),
+          descripcion_portada: campo("descripcion-portada"),
+          titulo_catalogo: campo("titulo-catalogo"),
+          subtitulo_catalogo: campo("subtitulo-catalogo"),
+          promocion_activa: $("promocion-activa").checked,
+          promocion_texto: campo("promocion-texto"),
+          instagram_url: enlaceSocial("instagram"),
+          tiktok_url: enlaceSocial("tiktok"),
+          facebook_url: enlaceSocial("facebook"),
+          tema: campo("tema"),
+          whatsapp: numero,
+          portada_url: subida?.url || configActual.portada_url
+        };
+        const { error } = await db.from("configuracion").update(datos).eq("id", 1);
+        if (error) throw error;
+        await cargarConfiguracion();
+        informar("mensaje-config", "Configuración guardada. Actualiza la tienda para ver los cambios. 💗");
+      } catch (error) {
+        informar("mensaje-config", `No se pudo guardar: ${error.message}`, true);
+        if (subida?.ruta) await db.storage.from(BUCKET).remove([subida.ruta]);
+      } finally {
+        boton.disabled = false;
+      }
+    });
+
+    $("form-login").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const boton = $("boton-login");
+      boton.disabled = true;
+      informar("mensaje-login", "Verificando tus datos...");
+      try {
+        const { data, error } = await db.auth.signInWithPassword({
+          email: campo("correo"), password: $("clave").value
+        });
+        if (error) throw error;
+        if (!data.user || !(await esAdministrador(data.user))) {
+          await db.auth.signOut();
+          throw new Error("Esta cuenta no está autorizada como administradora.");
+        }
+        $("clave").value = "";
+        informar("mensaje-login", "");
+        await mostrarAcceso();
+      } catch (error) {
+        informar("mensaje-login", `No se pudo iniciar sesión: ${error.message}`, true);
+      } finally {
+        boton.disabled = false;
+      }
+    });
+
+    $("cerrar-sesion").addEventListener("click", async () => {
+      await db.auth.signOut();
+      mostrar("panel", false);
+      mostrar("pantalla-login", true);
+      $("clave").value = "";
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const conf = window.NELIDA_SUPABASE;
+        if (!window.supabase || !conf?.url?.startsWith("https://") || !conf?.publishableKey?.startsWith("sb_publishable_")) {
+          throw new Error("Revisa que supabase-config.js esté configurado y cargue correctamente.");
+        }
+        db = window.supabase.createClient(conf.url, conf.publishableKey);
+        await mostrarAcceso();
+        $("estado-inicial").hidden = true;
+      } catch (error) {
+        $("estado-inicial").textContent = `Error de conexión: ${error.message}`;
+        $("estado-inicial").classList.add("error");
+      }
+    });
+  </script>
+</body>
+</html>
